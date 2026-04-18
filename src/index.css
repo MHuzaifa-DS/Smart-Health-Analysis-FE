@@ -1,0 +1,178 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { box-sizing: border-box; }
+
+  html {
+    background-color: #060A0F;
+    color: #C9D1D9;
+    font-family: 'DM Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: #0D1117; }
+  ::-webkit-scrollbar-thumb { background: #30363D; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #484F58; }
+
+  ::selection { background: rgba(45,212,191,0.25); color: #F0F6FC; }
+}
+
+@layer components {
+  /* ── Card ── */
+  .card {
+    @apply bg-ink-900 border border-ink-700 rounded-xl;
+  }
+  .card-hover {
+    @apply card transition-all duration-200 hover:border-ink-600 hover:bg-ink-800;
+  }
+
+  /* ── Buttons ── */
+  .btn-primary {
+    @apply bg-teal-500 hover:bg-teal-400 text-ink-950 font-semibold
+           px-5 py-2.5 rounded-lg text-sm transition-all duration-150
+           disabled:opacity-40 disabled:cursor-not-allowed
+           active:scale-95 font-display;
+  }
+  .btn-ghost {
+    @apply border border-ink-600 hover:border-ink-500 hover:bg-ink-800
+           text-ink-200 px-4 py-2 rounded-lg text-sm transition-all duration-150
+           disabled:opacity-40 disabled:cursor-not-allowed font-display;
+  }
+  .btn-danger {
+    @apply bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30
+           text-rose-400 px-4 py-2 rounded-lg text-sm transition-all font-display;
+  }
+
+  /* ── Inputs ── */
+  .input {
+    @apply bg-ink-800 border border-ink-600 rounded-lg px-4 py-2.5
+           text-ink-100 placeholder-ink-500 text-sm w-full
+           focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500/30
+           transition-all duration-150;
+  }
+  .label {
+    @apply text-xs font-medium text-ink-300 uppercase tracking-wider mb-1.5 block font-display;
+  }
+
+  /* ── Badge ── */
+  .badge-high   { @apply bg-rose-500/15 text-rose-400 border border-rose-500/20 text-xs px-2 py-0.5 rounded-full font-medium; }
+  .badge-medium { @apply bg-amber-500/15 text-amber-400 border border-amber-500/20 text-xs px-2 py-0.5 rounded-full font-medium; }
+  .badge-low    { @apply bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 text-xs px-2 py-0.5 rounded-full font-medium; }
+  .badge-normal { @apply bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 text-xs px-2 py-0.5 rounded-full font-medium; }
+  .badge-abnormal { @apply bg-rose-500/15 text-rose-400 border border-rose-500/20 text-xs px-2 py-0.5 rounded-full font-medium; }
+  .badge-borderline { @apply bg-amber-500/15 text-amber-400 border border-amber-500/20 text-xs px-2 py-0.5 rounded-full font-medium; }
+  .badge-critical { @apply bg-rose-600/25 text-rose-300 border border-rose-500/30 text-xs px-2 py-0.5 rounded-full font-semibold; }
+
+  /* ── Glow accents ── */
+  .glow-teal  { box-shadow: 0 0 20px rgba(45,212,191,0.12); }
+  .glow-rose  { box-shadow: 0 0 20px rgba(244,63,94,0.15); }
+
+  /* ── Glass card ── */
+  .glass-card {
+    @apply relative backdrop-blur-2xl rounded-2xl border border-white/[0.20];
+    background: rgba(255,255,255,0.08);
+    box-shadow:
+      0 8px 48px rgba(0,0,0,0.50),
+      inset 0 1px 0 rgba(255,255,255,0.20),
+      0 0 0 1px rgba(96,165,250,0.12),
+      0 0 40px rgba(59,130,246,0.18),
+      0 0 80px rgba(59,130,246,0.08);
+  }
+
+  /* ── Glass input ── */
+  .input-glass {
+    @apply rounded-lg px-4 py-2.5 text-white text-sm w-full
+      placeholder-blue-200/35
+      transition-all duration-300;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(96,165,250,0.28);
+    outline: none;
+  }
+  .input-glass:hover {
+    background: rgba(255,255,255,0.10);
+    border-color: rgba(96,165,250,0.50);
+  }
+  .input-glass:focus {
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(96,165,250,0.80);
+    box-shadow: 0 0 12px rgba(59,130,246,0.45), 0 0 24px rgba(59,130,246,0.20), inset 0 0 10px rgba(59,130,246,0.08);
+  }
+  .input-glass option {
+    background: #071428;
+    color: #e0f2fe;
+  }
+
+  /* ── Neon shimmer button ── */
+  .btn-shimmer {
+    position: relative;
+    overflow: hidden;
+    @apply font-semibold font-display px-5 py-2.5 rounded-lg text-sm text-white
+      transition-all duration-300
+      disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.97];
+    background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 45%, #3b82f6 100%);
+    box-shadow: 0 0 20px rgba(59,130,246,0.35), 0 4px 15px rgba(29,78,216,0.30);
+  }
+  .btn-shimmer:hover:not(:disabled) {
+    background: linear-gradient(135deg, #2563eb 0%, #3b82f6 50%, #60a5fa 100%);
+    box-shadow:
+      0 0 25px rgba(59,130,246,0.80),
+      0 0 50px rgba(59,130,246,0.50),
+      0 0 80px rgba(59,130,246,0.25),
+      0 4px 20px rgba(29,78,216,0.50);
+    transform: scale(1.02) translateY(-2px);
+  }
+  .btn-shimmer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.40) 52%, transparent 65%);
+    transform: translateX(-140%);
+    transition: transform 0.65s ease;
+  }
+  .btn-shimmer:hover:not(:disabled)::after { transform: translateX(140%); }
+}
+
+/* ─────────────────────────────────────────────
+   Keyframes for register page effects
+───────────────────────────────────────────── */
+
+/* Aurora orb — translate + scale + hue-rotate */
+@keyframes aurora {
+  0%,100% { transform: translate(0,0) scale(1);            filter: blur(80px)  hue-rotate(0deg);   }
+  25%      { transform: translate(55px,-75px) scale(1.18); filter: blur(105px) hue-rotate(55deg);  }
+  50%      { transform: translate(-45px,55px) scale(0.86); filter: blur(70px)  hue-rotate(-40deg); }
+  75%      { transform: translate(30px,-30px) scale(1.08); filter: blur(95px)  hue-rotate(28deg);  }
+}
+
+/* Background gradient slow-shift */
+@keyframes auroraBg {
+  0%,100% { background-position: 0%   50%; }
+  25%      { background-position: 100% 50%; }
+  50%      { background-position: 100% 0%;  }
+  75%      { background-position: 0%   100%;}
+}
+
+/* Floating particles rise upward */
+@keyframes particleRise {
+  0%   { transform: translateY(0)     translateX(0);    opacity: 0;   }
+  8%   {                                                opacity: 1;   }
+  50%  { transform: translateY(-48vh) translateX(18px);              }
+  92%  {                                                opacity: 0.7; }
+  100% { transform: translateY(-100vh) translateX(-10px); opacity: 0; }
+}
+
+/* Neon border pulse */
+@keyframes neonPulse {
+  0%,100% { box-shadow: 0 0 6px rgba(59,130,246,0.55), 0 0 14px rgba(59,130,246,0.28); }
+  50%      { box-shadow: 0 0 18px rgba(59,130,246,0.95), 0 0 36px rgba(59,130,246,0.65), 0 0 60px rgba(59,130,246,0.35); }
+}
+
+/* Organic blob morphing (wave effect) */
+@keyframes morph {
+  0%,100% { border-radius: 42% 58% 68% 32% / 42% 38% 62% 52%; }
+  34%      { border-radius: 72% 28% 48% 52% / 32% 28% 72% 68%; }
+  67%      { border-radius: 100% 58% 58% 100% / 100% 100% 58% 58%; }
+}
