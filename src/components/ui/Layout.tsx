@@ -56,6 +56,13 @@ function LogoutIcon({ className = '' }: { className?: string }) {
     </svg>
   )
 }
+function MenuIcon({ className = '' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M3 12h18M3 6h18M3 18h18" />
+    </svg>
+  )
+}
 
 const NAV = [
   { to: '/dashboard',   Icon: HomeIcon,   label: 'Dashboard' },
@@ -69,6 +76,7 @@ export default function Layout() {
   const { user, clearAuth } = useAuthStore()
   const navigate = useNavigate()
   const [loggingOut, setLoggingOut] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const handleLogout = async () => {
     setLoggingOut(true)
@@ -98,9 +106,22 @@ export default function Layout() {
         .sh-nav-item { animation: navFadeIn 0.4s ease forwards; opacity: 0; }
       `}</style>
 
+      {/* Mobile overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-30 bg-black/50 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* ========== Deep teal sidebar ========== */}
       <aside
-        className="w-64 flex-shrink-0 flex flex-col relative overflow-hidden text-white"
+        className={`
+          fixed inset-y-0 left-0 z-40 w-64 flex flex-col flex-shrink-0 overflow-hidden text-white
+          transform transition-transform duration-300 ease-in-out
+          md:relative md:translate-x-0
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+        `}
         style={{
           background: 'linear-gradient(180deg, #0D9488 0%, #0F766E 55%, #134E4A 100%)',
         }}
@@ -138,6 +159,7 @@ export default function Layout() {
             <NavLink
               key={to}
               to={to}
+              onClick={() => setSidebarOpen(false)}
               className={({ isActive }) =>
                 `sh-nav-item relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200 group ${
                   isActive
@@ -203,6 +225,27 @@ export default function Layout() {
 
       {/* ========== Main content ========== */}
       <main className="flex-1 overflow-y-auto" style={{ backgroundColor: '#FAFAF9' }}>
+        {/* Mobile top bar */}
+        <div className="md:hidden sticky top-0 z-20 flex items-center gap-3 px-4 py-3 bg-white border-b border-gray-200">
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="p-1.5 rounded-lg text-teal-700 hover:bg-teal-50 transition-colors"
+          >
+            <MenuIcon className="w-5 h-5" />
+          </button>
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-lg bg-teal-600 flex items-center justify-center">
+              <PlusIcon className="w-4 h-4 text-white" />
+            </div>
+            <span
+              className="font-semibold text-teal-700 text-sm"
+              style={{ fontFamily: "'Sora', sans-serif" }}
+            >
+              SmartHealth
+            </span>
+          </div>
+        </div>
+
         <Outlet />
       </main>
     </div>
