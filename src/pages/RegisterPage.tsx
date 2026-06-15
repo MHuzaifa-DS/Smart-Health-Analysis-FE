@@ -2,358 +2,750 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { authApi } from '@/lib/api'
 
-// ── Animated blob background ──────────────────────────────────────────────────
-function BlobBackground() {
+// ========== Icons ==========
+function PlusIcon({ className = '' }: { className?: string }) {
   return (
-    <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }}>
-      <style>{`
-        @keyframes blobMove1 { 0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(30px,-20px) scale(1.05)} 66%{transform:translate(-20px,15px) scale(0.97)} }
-        @keyframes blobMove2 { 0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(-25px,20px) scale(1.04)} 66%{transform:translate(20px,-15px) scale(0.98)} }
-        @keyframes blobMove3 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(15px,25px) scale(1.06)} }
-      `}</style>
-      <div style={{ position:'absolute', top:'-15%', right:'-10%', width:520, height:520, borderRadius:'60% 40% 30% 70% / 60% 30% 70% 40%', background:'radial-gradient(circle at 40% 40%, #dbeafe 0%, #bfdbfe 60%, transparent 80%)', opacity:0.7, animation:'blobMove1 14s ease-in-out infinite' }} />
-      <div style={{ position:'absolute', bottom:'-12%', left:'-8%', width:440, height:440, borderRadius:'30% 60% 70% 40% / 50% 60% 30% 60%', background:'radial-gradient(circle at 60% 60%, #e0f2fe 0%, #bae6fd 60%, transparent 80%)', opacity:0.6, animation:'blobMove2 18s ease-in-out infinite' }} />
-      <div style={{ position:'absolute', top:'35%', left:'40%', width:260, height:260, borderRadius:'50%', background:'radial-gradient(circle, #eff6ff 0%, transparent 70%)', opacity:0.5, animation:'blobMove3 12s ease-in-out infinite' }} />
-    </div>
+    <svg viewBox="0 0 24 24" fill="none" className={className}>
+      <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+    </svg>
+  )
+}
+function UserIcon({ className = '' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
+    </svg>
+  )
+}
+function MailIcon({ className = '' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <rect x="2" y="4" width="20" height="16" rx="2" />
+      <path d="M22 7l-10 7L2 7" />
+    </svg>
+  )
+}
+function LockIcon({ className = '' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <rect x="4" y="11" width="16" height="10" rx="2" />
+      <path d="M8 11V7a4 4 0 018 0v4" />
+    </svg>
+  )
+}
+function EyeIcon({ open, className = '' }: { open: boolean; className?: string }) {
+  if (open) {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+        <circle cx="12" cy="12" r="3" />
+      </svg>
+    )
+  }
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24M1 1l22 22" />
+    </svg>
+  )
+}
+function CalendarIcon({ className = '' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <rect x="3" y="4" width="18" height="18" rx="2" />
+      <path d="M16 2v4M8 2v4M3 10h18" />
+    </svg>
+  )
+}
+function DropletIcon({ className = '' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M12 2.5c-4 4.5-7 8-7 11.5a7 7 0 0014 0c0-3.5-3-7-7-11.5z" />
+    </svg>
+  )
+}
+function AlertIcon({ className = '' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 8v4M12 16h.01" />
+    </svg>
+  )
+}
+function CheckIcon({ className = '' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M20 6L9 17l-5-5" />
+    </svg>
+  )
+}
+function ShieldCheckIcon({ className = '' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M12 2l8 4v6c0 5-3.5 9.5-8 10-4.5-.5-8-5-8-10V6l8-4z" />
+      <path d="M9 12l2 2 4-4" />
+    </svg>
+  )
+}
+function ArrowIcon({ className = '' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M5 12h14M13 5l7 7-7 7" />
+    </svg>
+  )
+}
+function Spinner({ className = '' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className + ' animate-spin'}>
+      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeOpacity="0.25" strokeWidth="3" />
+      <path d="M12 2a10 10 0 0110 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+    </svg>
+  )
+}
+function PulseIcon({ className = '' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M3 12h4l3-9 4 18 3-9h4" />
+    </svg>
+  )
+}
+function FlaskIcon({ className = '' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M9 3h6M10 3v6L5 20a2 2 0 002 2h10a2 2 0 002-2l-5-11V3" />
+      <path d="M7 15h10" />
+    </svg>
+  )
+}
+function ChatIcon({ className = '' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+    </svg>
   )
 }
 
-// ── Animated health stats card ────────────────────────────────────────────────
-function StatsCard() {
-  const stats = [
-    { icon: '🩺', label: 'Disease Prediction', val: '82–91%', sub: 'accuracy rate', color: '#2563eb' },
-    { icon: '🧪', label: 'Lab Analysis', val: '95.5%', sub: 'OCR extraction', color: '#0891b2' },
-    { icon: '💬', label: 'Symptom Intake', val: '91%', sub: 'mapping accuracy', color: '#0369a1' },
-  ]
-  return (
-    <div style={{ background: '#fff', borderRadius: 20, padding: '22px 20px', boxShadow: '0 4px 24px rgba(37,99,235,0.10), 0 0 0 1px rgba(219,234,254,0.8)' }}>
-      <p style={{ fontSize: 11, fontWeight: 700, color: '#94a3b8', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 14 }}>System Performance</p>
-      {stats.map((s, i) => (
-        <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: i < stats.length - 1 ? 14 : 0, animation: `rSlideUp 0.5s ease both ${0.4 + i * 0.12}s`, opacity: 0 }}>
-          <div style={{ width: 38, height: 38, borderRadius: 11, background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17, flexShrink: 0 }}>{s.icon}</div>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 12, color: '#64748b', marginBottom: 2 }}>{s.label}</div>
-            <div style={{ height: 5, background: '#f1f5f9', borderRadius: 999, overflow: 'hidden' }}>
-              <div style={{ height: '100%', background: `linear-gradient(90deg, ${s.color}, #0ea5e9)`, borderRadius: 999, width: s.val.replace('%','').split('–')[0] + '%', animation: `rBarGrow 1s ease both ${0.7 + i * 0.15}s`, transform: 'scaleX(0)', transformOrigin: 'left' }} />
-            </div>
-          </div>
-          <div style={{ textAlign: 'right', flexShrink: 0 }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: s.color }}>{s.val}</div>
-            <div style={{ fontSize: 10, color: '#94a3b8' }}>{s.sub}</div>
-          </div>
-        </div>
-      ))}
-    </div>
-  )
-}
-
+// ========== Main ==========
 export default function RegisterPage() {
   const navigate = useNavigate()
-  const [form, setForm] = useState({ email: '', password: '', full_name: '', age: '', gender: '', blood_type: '' })
+  const [form, setForm] = useState({
+    email: '',
+    password: '',
+    full_name: '',
+    age: '',
+    gender: '',
+    blood_type: '',
+  })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [showPw, setShowPw] = useState(false)
 
   const submit = async (e: React.FormEvent) => {
-    e.preventDefault(); setError(''); setLoading(true)
+    e.preventDefault()
+    setError('')
+    setLoading(true)
     try {
-      await authApi.register({ ...form, age: form.age ? parseInt(form.age) : undefined, gender: form.gender || undefined, blood_type: form.blood_type || undefined })
-      setSuccess(true); setTimeout(() => navigate('/login'), 2200)
+      await authApi.register({
+        ...form,
+        age: form.age ? parseInt(form.age) : undefined,
+        gender: form.gender || undefined,
+        blood_type: form.blood_type || undefined,
+      })
+      setSuccess(true)
+      setTimeout(() => navigate('/login'), 2200)
     } catch (err: any) {
       const d = err.response?.data?.detail
       setError(typeof d === 'string' ? d : 'Registration failed. Please try again.')
-    } finally { setLoading(false) }
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const f = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setForm(p => ({ ...p, [k]: e.target.value }))
+  const f =
+    (k: string) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
+      setForm((p) => ({ ...p, [k]: e.target.value }))
+
+  const inputFocus = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
+    e.currentTarget.style.backgroundColor = '#FFFFFF'
+    e.currentTarget.style.borderColor = '#0D9488'
+    e.currentTarget.style.boxShadow = '0 0 0 4px rgba(13, 148, 136, 0.14)'
+  }
+  const inputBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
+    e.currentTarget.style.backgroundColor = '#FAFAF9'
+    e.currentTarget.style.borderColor = '#E7E5E4'
+    e.currentTarget.style.boxShadow = 'none'
+  }
 
   return (
-    <>
+    <div
+      className="min-h-screen flex"
+      style={{ fontFamily: "'DM Sans', sans-serif", backgroundColor: '#FAFAF9', color: '#0F172A' }}
+    >
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Lora:wght@600;700&display=swap');
-        *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
-
-        @keyframes rSlideUp  { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
-        @keyframes rFadeIn   { from{opacity:0} to{opacity:1} }
-        @keyframes rBarGrow  { from{transform:scaleX(0)} to{transform:scaleX(1)} }
-        @keyframes spin      { to{transform:rotate(360deg)} }
-        @keyframes shimmer   { 0%{background-position:-200% center} 100%{background-position:200% center} }
-        @keyframes checkBounce { 0%{transform:scale(0) rotate(-15deg);opacity:0} 65%{transform:scale(1.2) rotate(5deg)} 100%{transform:scale(1) rotate(0);opacity:1} }
-        @keyframes successPulse { 0%,100%{box-shadow:0 0 0 0 rgba(37,99,235,0.3)} 50%{box-shadow:0 0 0 14px rgba(37,99,235,0)} }
-        @keyframes floatFeature { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
-
-        .rp-page {
-          min-height: 100vh; display: flex; font-family: 'Plus Jakarta Sans', sans-serif;
-          background: #f0f7ff; position: relative; overflow: hidden;
+        @keyframes slowDrift {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          33%      { transform: translate(40px, -60px) scale(1.15); }
+          66%      { transform: translate(-30px, 40px) scale(0.9); }
         }
-
-        /* LEFT PANEL */
-        .rp-left {
-          display: none; flex-direction: column; justify-content: center;
-          padding: 52px 44px; position: relative; z-index: 1;
-          background: linear-gradient(160deg, #1d4ed8 0%, #0369a1 60%, #0ea5e9 100%);
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(12px); }
+          to   { opacity: 1; transform: translateY(0); }
         }
-        @media (min-width: 1024px) { .rp-left { display: flex; width: 42%; } }
-
-        .rp-left-logo { display: flex; align-items: center; gap: 11px; margin-bottom: 48px; }
-        .rp-left-icon { width: 42px; height: 42px; border-radius: 13px; background: rgba(255,255,255,0.18); display: flex; align-items: center; justify-content: center; font-size: 20px; color: #fff; font-weight: 900; backdrop-filter: blur(8px); }
-        .rp-left-name { font-size: 15px; font-weight: 700; color: #fff; letter-spacing: -0.01em; }
-
-        .rp-left-heading { font-family: 'Lora', serif; font-size: 34px; font-weight: 700; color: #fff; line-height: 1.22; margin-bottom: 14px; }
-        .rp-left-sub { font-size: 14.5px; color: rgba(255,255,255,0.72); line-height: 1.65; max-width: 300px; margin-bottom: 36px; }
-
-        .rp-feature { display: flex; gap: 13px; align-items: flex-start; margin-bottom: 18px; animation: floatFeature 5s ease-in-out infinite; }
-        .rp-feature:nth-child(2) { animation-delay: 1.5s; }
-        .rp-feature:nth-child(3) { animation-delay: 3s; }
-        .rp-feature-icon { width: 38px; height: 38px; border-radius: 11px; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
-        .rp-feature-title { font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 2px; }
-        .rp-feature-desc { font-size: 12.5px; color: rgba(255,255,255,0.60); line-height: 1.5; }
-
-        .rp-left-bottom { margin-top: 36px; }
-
-        /* LEFT decorative circles */
-        .rp-left::before { content:''; position:absolute; top:-80px; right:-80px; width:280px; height:280px; border-radius:50%; background:rgba(255,255,255,0.07); pointer-events:none; }
-        .rp-left::after  { content:''; position:absolute; bottom:-60px; left:-40px; width:220px; height:220px; border-radius:50%; background:rgba(255,255,255,0.05); pointer-events:none; }
-
-        /* RIGHT PANEL */
-        .rp-right {
-          flex: 1; display: flex; flex-direction: column;
-          justify-content: center; align-items: center;
-          padding: 40px 24px; position: relative; z-index: 1; overflow-y: auto;
-        }
-
-        .rp-card {
-          width: 100%; max-width: 400px;
-          background: #fff; border-radius: 26px;
-          box-shadow: 0 4px 6px rgba(0,0,0,0.04), 0 16px 50px rgba(37,99,235,0.10), 0 0 0 1px rgba(219,234,254,0.8);
-          padding: 40px 36px;
-          animation: rSlideUp 0.55s cubic-bezier(0.22,1,0.36,1) forwards;
-        }
-
-        /* Mobile logo */
-        .rp-mobile-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
-        @media (min-width: 1024px) { .rp-mobile-logo { display: none !important; } }
-        .rp-mob-icon { width: 38px; height: 38px; border-radius: 11px; background: linear-gradient(135deg,#1d4ed8,#0ea5e9); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; font-weight: 900; }
-        .rp-mob-name { font-size: 15px; font-weight: 700; color: #1e3a5f; }
-
-        .rp-heading { font-family: 'Lora', serif; font-size: 26px; font-weight: 700; color: #0f2040; line-height: 1.2; margin-bottom: 6px; }
-        .rp-sub { font-size: 13px; color: #64748b; margin-bottom: 24px; }
-        .rp-sub a { color: #2563eb; font-weight: 600; text-decoration: none; }
-        .rp-sub a:hover { text-decoration: underline; }
-
-        .rp-label { display: block; font-size: 11.5px; font-weight: 700; color: #374151; margin-bottom: 5px; letter-spacing: 0.04em; text-transform: uppercase; }
-        .rp-field { margin-bottom: 14px; position: relative; }
-        .rp-inp { width: 100%; padding: 12px 16px 12px 42px; border-radius: 12px; border: 1.5px solid #e2e8f0; background: #f8fafc; color: #1e293b; font-size: 14px; font-family: 'Plus Jakarta Sans', sans-serif; outline: none; transition: border-color .2s, box-shadow .2s, background .2s; }
-        .rp-inp::placeholder { color: #94a3b8; }
-        .rp-inp:focus { border-color: #2563eb; background: #fff; box-shadow: 0 0 0 4px rgba(37,99,235,0.09); }
-        .rp-ico { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 14px; pointer-events: none; line-height: 1; }
-        .rp-eye { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #94a3b8; display: flex; padding: 4px; transition: color .2s; }
-        .rp-eye:hover { color: #475569; }
-
-        .rp-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
-
-        .rp-section-label {
-          display: flex; align-items: center; gap: 8px; margin: 16px 0 12px;
-          padding-top: 14px; border-top: 1px solid #f1f5f9;
-        }
-        .rp-section-text { font-size: 12px; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.04em; }
-        .rp-opt-badge { font-size: 10px; color: #0369a1; background: #e0f2fe; border: 1px solid #bae6fd; padding: 2px 8px; border-radius: 999px; font-weight: 600; }
-
-        .rp-btn {
-          width: 100%; padding: 14px; border-radius: 13px; border: none; cursor: pointer;
-          font-size: 15px; font-weight: 700; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif;
-          background: linear-gradient(135deg, #1d4ed8 0%, #0ea5e9 100%);
-          box-shadow: 0 6px 22px rgba(29,78,216,0.30);
-          transition: box-shadow .25s, transform .15s, opacity .2s;
-          display: flex; align-items: center; justify-content: center; gap: 8px;
-          margin-top: 8px; position: relative; overflow: hidden;
-        }
-        .rp-btn::after { content:''; position:absolute; inset:0; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.16),transparent); background-size:200% 100%; animation:shimmer 2.6s linear infinite; }
-        .rp-btn:hover:not(:disabled) { box-shadow: 0 10px 32px rgba(29,78,216,0.42); transform: translateY(-1px); }
-        .rp-btn:active:not(:disabled) { transform: translateY(0); }
-        .rp-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        .rp-trust { margin-top: 20px; display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; }
-        .rp-trust-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #94a3b8; }
-        .rp-trust-dot { width: 5px; height: 5px; border-radius: 50%; background: #22c55e; display: inline-block; }
-
-        .rp-err { margin-bottom: 14px; padding: 10px 13px; border-radius: 10px; background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; font-size: 13px; display: flex; gap: 8px; animation: rSlideUp .3s ease; }
-
-        /* success */
-        .rp-success { text-align: center; padding: 28px 12px; }
-        .rp-success-icon { width: 70px; height: 70px; border-radius: 50%; background: #eff6ff; border: 2px solid #bfdbfe; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 18px; animation: checkBounce .55s cubic-bezier(.34,1.56,.64,1) forwards, successPulse 2.2s ease infinite .6s; }
-        .rp-success-title { font-family: 'Lora', serif; font-size: 24px; font-weight: 700; color: #0f2040; margin-bottom: 7px; }
-        .rp-success-sub { font-size: 13.5px; color: #64748b; }
-
-        .rp-f1 { animation: rSlideUp .5s ease both .1s; opacity:0; }
-        .rp-f2 { animation: rSlideUp .5s ease both .2s; opacity:0; }
-        .rp-f3 { animation: rSlideUp .5s ease both .3s; opacity:0; }
-        .rp-f4 { animation: rSlideUp .5s ease both .38s; opacity:0; }
-        .rp-f5 { animation: rSlideUp .5s ease both .46s; opacity:0; }
-        .rp-f6 { animation: rSlideUp .5s ease both .54s; opacity:0; }
-        .rp-f7 { animation: rSlideUp .5s ease both .62s; opacity:0; }
+        .rp-item { animation: fadeIn 0.5s ease forwards; opacity: 0; }
       `}</style>
 
-      <div className="rp-page">
-        <BlobBackground />
+      {/* ========== Left panel (vibrant teal gradient) ========== */}
+      <div
+        className="hidden lg:flex lg:w-[42%] relative overflow-hidden text-white p-12 flex-col justify-between"
+        style={{
+          background:
+            'linear-gradient(135deg, #14B8A6 0%, #0D9488 28%, #0F766E 58%, #134E4A 100%)',
+        }}
+      >
+        {/* Bright decorative accents */}
+        <div
+          className="absolute -top-20 -right-20 w-96 h-96 rounded-full blur-3xl pointer-events-none"
+          style={{
+            background: 'radial-gradient(circle, rgba(165, 243, 252, 0.45) 0%, rgba(103, 232, 249, 0.2) 50%, transparent 80%)',
+            animation: 'slowDrift 14s ease-in-out infinite',
+          }}
+        />
+        <div
+          className="absolute -bottom-16 -left-10 w-80 h-80 rounded-full blur-3xl pointer-events-none"
+          style={{
+            background: 'radial-gradient(circle, rgba(45, 212, 191, 0.45) 0%, transparent 75%)',
+            animation: 'slowDrift 16s ease-in-out infinite 2s',
+          }}
+        />
+        <div
+          className="absolute top-1/2 left-1/4 w-56 h-56 rounded-full blur-2xl pointer-events-none opacity-70"
+          style={{
+            background: 'radial-gradient(circle, rgba(204, 251, 241, 0.4) 0%, transparent 70%)',
+          }}
+        />
 
-        {/* ── Left panel ──────────────────────────────────────── */}
-        <div className="rp-left">
-          <div className="rp-left-logo">
-            <div className="rp-left-icon">✚</div>
-            <span className="rp-left-name">Smart Health Assistant</span>
-          </div>
+        {/* Logo */}
+        <div className="relative z-10">
+          <Link to="/" className="inline-flex items-center gap-2.5 group">
+            <div
+              className="w-10 h-10 rounded-xl backdrop-blur-sm flex items-center justify-center text-white"
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.12)',
+              }}
+            >
+              <PlusIcon className="w-5 h-5" />
+            </div>
+            <div className="leading-tight">
+              <p
+                className="font-semibold text-white text-[15px] transition-colors"
+                style={{ fontFamily: "'Sora', sans-serif" }}
+              >
+                SmartHealth
+              </p>
+              <p className="text-[11px] -mt-0.5" style={{ color: 'rgba(204, 251, 241, 0.85)' }}>
+                AI Health Assistant
+              </p>
+            </div>
+          </Link>
+        </div>
 
-          <h1 className="rp-left-heading">
-            Start your<br />
-            <span style={{ color: '#bae6fd' }}>health journey</span><br />
-            today.
+        {/* Hero copy */}
+        <div className="relative z-10">
+          <h1
+            className="text-4xl xl:text-5xl font-bold leading-[1.1] tracking-tight"
+            style={{ fontFamily: "'Sora', sans-serif" }}
+          >
+            Start your{' '}
+            <span style={{ color: '#99F6E4' }}>health journey</span> today.
           </h1>
-          <p className="rp-left-sub">
-            AI-powered preliminary health assessments grounded in the Gale Encyclopedia of Medicine.
+          <p
+            className="mt-5 text-base leading-relaxed max-w-sm"
+            style={{ color: 'rgba(204, 251, 241, 0.95)' }}
+          >
+            Preliminary AI-assisted health assessments grounded in the Gale
+            Encyclopedia of Medicine.
           </p>
 
-          <div className="rp-feature" style={{ animationDelay: '0s' }}>
-            <div className="rp-feature-icon">🤖</div>
-            <div><div className="rp-feature-title">AI Disease Prediction</div><div className="rp-feature-desc">RAG + ML combined for accurate, cited results</div></div>
-          </div>
-          <div className="rp-feature" style={{ animationDelay: '1.5s' }}>
-            <div className="rp-feature-icon">🧪</div>
-            <div><div className="rp-feature-title">Lab Report Analysis</div><div className="rp-feature-desc">Upload PDF — get instant interpretation</div></div>
-          </div>
-          <div className="rp-feature" style={{ animationDelay: '3s' }}>
-            <div className="rp-feature-icon">💬</div>
-            <div><div className="rp-feature-title">Natural Chat Intake</div><div className="rp-feature-desc">Just describe how you feel, in your own words</div></div>
-          </div>
-
-          <div className="rp-left-bottom">
-            <StatsCard />
+          {/* Feature list */}
+          <div className="mt-10 space-y-5">
+            {[
+              {
+                icon: <PulseIcon className="w-5 h-5" />,
+                title: 'AI Symptom Analysis',
+                desc: 'Plain-language symptoms, referenced results.',
+              },
+              {
+                icon: <FlaskIcon className="w-5 h-5" />,
+                title: 'Lab Report Interpretation',
+                desc: 'Upload a PDF, get clear explanations.',
+              },
+              {
+                icon: <ChatIcon className="w-5 h-5" />,
+                title: 'Natural Chat Intake',
+                desc: 'Describe how you feel, in your own words.',
+              },
+            ].map((item, idx) => (
+              <div
+                key={item.title}
+                className="flex items-start gap-3.5 rp-item"
+                style={{ animationDelay: `${0.2 + idx * 0.1}s` }}
+              >
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                  style={{
+                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.10)',
+                  }}
+                >
+                  {item.icon}
+                </div>
+                <div>
+                  <p
+                    className="font-semibold text-white text-sm"
+                    style={{ fontFamily: "'Sora', sans-serif" }}
+                  >
+                    {item.title}
+                  </p>
+                  <p
+                    className="text-xs mt-0.5 leading-relaxed"
+                    style={{ color: 'rgba(204, 251, 241, 0.8)' }}
+                  >
+                    {item.desc}
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* ── Right panel ─────────────────────────────────────── */}
-        <div className="rp-right">
-
-          {/* Mobile logo */}
-          <div className="rp-mobile-logo">
-            <div className="rp-mob-icon">✚</div>
-            <span className="rp-mob-name">Smart Health Assistant</span>
+        {/* Bottom trust card */}
+        <div className="relative z-10">
+          <div
+            className="rounded-2xl backdrop-blur-sm p-5 rp-item"
+            style={{
+              animationDelay: '0.6s',
+              backgroundColor: 'rgba(255, 255, 255, 0.12)',
+              border: '1px solid rgba(255, 255, 255, 0.25)',
+              boxShadow: '0 10px 30px rgba(0, 0, 0, 0.12)',
+            }}
+          >
+            <div className="flex items-start gap-3">
+              <ShieldCheckIcon
+                className="w-5 h-5 flex-shrink-0 mt-0.5"
+                style={{ color: '#99F6E4' } as any}
+              />
+              <div>
+                <p className="text-sm font-medium text-white leading-snug">
+                  Grounded in trusted medical references.
+                </p>
+                <p
+                  className="text-xs mt-1 leading-relaxed"
+                  style={{ color: 'rgba(204, 251, 241, 0.85)' }}
+                >
+                  Every prediction cites sources from the Gale Encyclopedia of
+                  Medicine.
+                </p>
+              </div>
+            </div>
           </div>
+        </div>
+      </div>
 
-          <div className="rp-card">
+      {/* ========== Right panel (form) ========== */}
+      <div className="flex-1 flex flex-col" style={{ backgroundColor: '#FAFAF9' }}>
+        {/* Mini top nav */}
+        <div
+          className="px-6 h-16 flex items-center justify-between"
+          style={{ backgroundColor: '#FFFFFF', borderBottom: '1px solid #E7E5E4' }}
+        >
+          <Link to="/" className="lg:hidden flex items-center gap-2.5 group">
+            <div
+              className="w-9 h-9 rounded-xl flex items-center justify-center text-white"
+              style={{ backgroundColor: '#0D9488', boxShadow: '0 6px 16px rgba(13, 148, 136, 0.35)' }}
+            >
+              <PlusIcon className="w-5 h-5" />
+            </div>
+            <p
+              className="font-semibold text-[15px] transition-colors"
+              style={{ fontFamily: "'Sora', sans-serif", color: '#0F172A' }}
+            >
+              SmartHealth
+            </p>
+          </Link>
+          <div className="hidden lg:block" />
+          <Link
+            to="/"
+            className="text-sm transition-colors"
+            style={{ fontFamily: "'Sora', sans-serif", color: '#475569' }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#0D9488')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = '#475569')}
+          >
+            Back to home
+          </Link>
+        </div>
 
+        {/* Subtle ambient on right side too */}
+        <div className="flex-1 relative flex items-center justify-center px-6 py-10 overflow-y-auto">
+          <div
+            className="absolute top-20 right-10 w-64 h-64 rounded-full blur-3xl pointer-events-none opacity-70"
+            style={{ background: 'radial-gradient(circle, rgba(20, 184, 166, 0.20) 0%, transparent 70%)' }}
+          />
+          <div
+            className="absolute bottom-10 left-10 w-56 h-56 rounded-full blur-3xl pointer-events-none opacity-60"
+            style={{ background: 'radial-gradient(circle, rgba(204, 251, 241, 0.45) 0%, transparent 75%)' }}
+          />
+
+          <div className="relative w-full max-w-md">
             {success ? (
-              <div className="rp-success">
-                <div className="rp-success-icon">✓</div>
-                <h2 className="rp-success-title">Account created!</h2>
-                <p className="rp-success-sub">Redirecting you to sign in…</p>
+              // ========== Success state ==========
+              <div
+                className="rounded-3xl p-10 text-center animate-fade-up"
+                style={{
+                  backgroundColor: '#FFFFFF',
+                  border: '1px solid #CCFBF1',
+                  boxShadow: '0 25px 70px rgba(13, 148, 136, 0.18), 0 4px 12px rgba(15, 23, 42, 0.05)',
+                }}
+              >
+                <div
+                  className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5"
+                  style={{
+                    backgroundColor: '#D1FAE5',
+                    border: '2px solid #A7F3D0',
+                    color: '#047857',
+                    boxShadow: '0 6px 20px rgba(5, 150, 105, 0.25)',
+                  }}
+                >
+                  <CheckIcon className="w-7 h-7" />
+                </div>
+                <h2
+                  className="text-2xl font-bold tracking-tight"
+                  style={{ fontFamily: "'Sora', sans-serif", color: '#0F172A' }}
+                >
+                  Account created
+                </h2>
+                <p className="mt-2 text-sm" style={{ color: '#475569' }}>
+                  Redirecting you to sign in...
+                </p>
               </div>
             ) : (
-              <>
-                <div className="rp-f1">
-                  <h1 className="rp-heading">Create account</h1>
-                  <p className="rp-sub">Already have one? <Link to="/login">Sign in →</Link></p>
+              // ========== Form ==========
+              <div
+                className="rounded-3xl p-8 md:p-10 animate-fade-up"
+                style={{
+                  backgroundColor: '#FFFFFF',
+                  border: '1px solid #CCFBF1',
+                  boxShadow: '0 25px 70px rgba(13, 148, 136, 0.18), 0 4px 12px rgba(15, 23, 42, 0.05)',
+                }}
+              >
+                <div className="mb-7">
+                  <h1
+                    className="text-3xl font-bold tracking-tight"
+                    style={{ fontFamily: "'Sora', sans-serif", color: '#0F172A' }}
+                  >
+                    Create account
+                  </h1>
+                  <p className="mt-2 text-sm" style={{ color: '#475569' }}>
+                    Already have one?{' '}
+                    <Link
+                      to="/login"
+                      className="font-semibold transition-colors"
+                      style={{ color: '#0D9488' }}
+                      onMouseEnter={(e) => (e.currentTarget.style.color = '#0F766E')}
+                      onMouseLeave={(e) => (e.currentTarget.style.color = '#0D9488')}
+                    >
+                      Sign in
+                    </Link>
+                  </p>
                 </div>
 
-                {error && <div className="rp-err rp-f1"><span style={{ flexShrink:0 }}>⚠</span>{error}</div>}
+                {error && (
+                  <div
+                    className="mb-5 flex items-start gap-2.5 px-4 py-3 rounded-xl text-sm"
+                    style={{ backgroundColor: '#FFE4E6', border: '1px solid #FECDD3', color: '#BE123C' }}
+                  >
+                    <AlertIcon className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                    <span>{error}</span>
+                  </div>
+                )}
 
-                <form onSubmit={submit}>
-                  <div className="rp-f2">
-                    <label className="rp-label">Full name</label>
-                    <div className="rp-field">
-                      <span className="rp-ico">👤</span>
-                      <input type="text" required placeholder="Your full name" className="rp-inp"
-                        value={form.full_name} onChange={f('full_name')} />
+                <form onSubmit={submit} className="space-y-4">
+                  {/* Full name */}
+                  <div>
+                    <label
+                      htmlFor="full_name"
+                      className="block text-xs font-semibold uppercase tracking-wider mb-1.5"
+                      style={{ fontFamily: "'Sora', sans-serif", color: '#334155' }}
+                    >
+                      Full name
+                    </label>
+                    <div className="relative">
+                      <UserIcon
+                        className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
+                        style={{ color: '#94A3B8' } as any}
+                      />
+                      <input
+                        id="full_name"
+                        type="text"
+                        required
+                        placeholder="Your full name"
+                        value={form.full_name}
+                        onChange={f('full_name')}
+                        className="w-full pl-10 pr-4 py-3 rounded-xl text-sm transition-all"
+                        style={{ backgroundColor: '#FAFAF9', border: '1px solid #E7E5E4', color: '#0F172A', outline: 'none' }}
+                        onFocus={inputFocus}
+                        onBlur={inputBlur}
+                      />
                     </div>
                   </div>
 
-                  <div className="rp-f3">
-                    <label className="rp-label">Email address</label>
-                    <div className="rp-field">
-                      <span className="rp-ico">📧</span>
-                      <input type="email" required placeholder="you@example.com" className="rp-inp"
-                        value={form.email} onChange={f('email')} />
+                  {/* Email */}
+                  <div>
+                    <label
+                      htmlFor="email"
+                      className="block text-xs font-semibold uppercase tracking-wider mb-1.5"
+                      style={{ fontFamily: "'Sora', sans-serif", color: '#334155' }}
+                    >
+                      Email address
+                    </label>
+                    <div className="relative">
+                      <MailIcon
+                        className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
+                        style={{ color: '#94A3B8' } as any}
+                      />
+                      <input
+                        id="email"
+                        type="email"
+                        required
+                        placeholder="you@example.com"
+                        value={form.email}
+                        onChange={f('email')}
+                        className="w-full pl-10 pr-4 py-3 rounded-xl text-sm transition-all"
+                        style={{ backgroundColor: '#FAFAF9', border: '1px solid #E7E5E4', color: '#0F172A', outline: 'none' }}
+                        onFocus={inputFocus}
+                        onBlur={inputBlur}
+                      />
                     </div>
                   </div>
 
-                  <div className="rp-f4">
-                    <label className="rp-label">Password</label>
-                    <div className="rp-field">
-                      <span className="rp-ico">🔒</span>
-                      <input type={showPw ? 'text' : 'password'} required minLength={8}
-                        placeholder="Min. 8 characters" className="rp-inp" style={{ paddingRight:42 }}
-                        value={form.password} onChange={f('password')} />
-                      <button type="button" className="rp-eye" onClick={() => setShowPw(v => !v)}>
-                        {showPw
-                          ? <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24M1 1l22 22"/></svg>
-                          : <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                        }
+                  {/* Password */}
+                  <div>
+                    <label
+                      htmlFor="password"
+                      className="block text-xs font-semibold uppercase tracking-wider mb-1.5"
+                      style={{ fontFamily: "'Sora', sans-serif", color: '#334155' }}
+                    >
+                      Password
+                    </label>
+                    <div className="relative">
+                      <LockIcon
+                        className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
+                        style={{ color: '#94A3B8' } as any}
+                      />
+                      <input
+                        id="password"
+                        type={showPw ? 'text' : 'password'}
+                        required
+                        minLength={8}
+                        placeholder="Min. 8 characters"
+                        value={form.password}
+                        onChange={f('password')}
+                        className="w-full pl-10 pr-11 py-3 rounded-xl text-sm transition-all"
+                        style={{ backgroundColor: '#FAFAF9', border: '1px solid #E7E5E4', color: '#0F172A', outline: 'none' }}
+                        onFocus={inputFocus}
+                        onBlur={inputBlur}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPw((v) => !v)}
+                        aria-label={showPw ? 'Hide password' : 'Show password'}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 p-1 transition-colors"
+                        style={{ color: '#94A3B8' }}
+                        onMouseEnter={(e) => (e.currentTarget.style.color = '#0D9488')}
+                        onMouseLeave={(e) => (e.currentTarget.style.color = '#94A3B8')}
+                      >
+                        <EyeIcon open={showPw} className="w-4 h-4" />
                       </button>
                     </div>
                   </div>
 
-                  {/* Optional health info */}
-                  <div className="rp-section-label rp-f5">
-                    <span className="rp-section-text">Health profile</span>
-                    <span className="rp-opt-badge">Optional</span>
-                  </div>
+                  {/* Optional health profile */}
+                  <div className="pt-4 mt-2" style={{ borderTop: '1px solid #F5F4F0' }}>
+                    <div className="flex items-center gap-2 mb-3">
+                      <span
+                        className="text-xs font-semibold uppercase tracking-wider"
+                        style={{ fontFamily: "'Sora', sans-serif", color: '#334155' }}
+                      >
+                        Health profile
+                      </span>
+                      <span
+                        className="text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider"
+                        style={{ color: '#0F766E', backgroundColor: '#F0FDFA', border: '1px solid #99F6E4' }}
+                      >
+                        Optional
+                      </span>
+                    </div>
+                    <p className="text-xs mb-4 leading-relaxed" style={{ color: '#64748B' }}>
+                      Helps us give more accurate suggestions. You can add or edit
+                      this later in your profile.
+                    </p>
 
-                  <div className="rp-f5">
-                    <div className="rp-grid2" style={{ marginBottom: 12 }}>
+                    <div className="grid grid-cols-2 gap-3">
+                      {/* Age */}
                       <div>
-                        <label className="rp-label">Age</label>
-                        <div className="rp-field" style={{ marginBottom:0 }}>
-                          <span className="rp-ico">🎂</span>
-                          <input type="number" placeholder="e.g. 28" min="1" max="120" className="rp-inp"
-                            value={form.age} onChange={f('age')} />
+                        <label
+                          htmlFor="age"
+                          className="block text-xs font-medium mb-1.5"
+                          style={{ color: '#475569' }}
+                        >
+                          Age
+                        </label>
+                        <div className="relative">
+                          <CalendarIcon
+                            className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
+                            style={{ color: '#94A3B8' } as any}
+                          />
+                          <input
+                            id="age"
+                            type="number"
+                            min={1}
+                            max={120}
+                            placeholder="e.g. 28"
+                            value={form.age}
+                            onChange={f('age')}
+                            className="w-full pl-10 pr-3 py-2.5 rounded-xl text-sm transition-all"
+                            style={{ backgroundColor: '#FAFAF9', border: '1px solid #E7E5E4', color: '#0F172A', outline: 'none' }}
+                            onFocus={inputFocus}
+                            onBlur={inputBlur}
+                          />
                         </div>
                       </div>
+
+                      {/* Gender */}
                       <div>
-                        <label className="rp-label">Gender</label>
-                        <div className="rp-field" style={{ marginBottom:0 }}>
-                          <span className="rp-ico">⚧</span>
-                          <select className="rp-inp" value={form.gender} onChange={f('gender')}>
-                            <option value="">Select</option>
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
-                            <option value="other">Other</option>
-                          </select>
-                        </div>
+                        <label
+                          htmlFor="gender"
+                          className="block text-xs font-medium mb-1.5"
+                          style={{ color: '#475569' }}
+                        >
+                          Gender
+                        </label>
+                        <select
+                          id="gender"
+                          value={form.gender}
+                          onChange={f('gender')}
+                          className="w-full px-3 py-2.5 rounded-xl text-sm transition-all appearance-none cursor-pointer"
+                          style={{ backgroundColor: '#FAFAF9', border: '1px solid #E7E5E4', color: '#0F172A', outline: 'none' }}
+                          onFocus={inputFocus}
+                          onBlur={inputBlur}
+                        >
+                          <option value="">Prefer not to say</option>
+                          <option value="male">Male</option>
+                          <option value="female">Female</option>
+                          <option value="other">Other</option>
+                        </select>
                       </div>
                     </div>
-                    <label className="rp-label">Blood type</label>
-                    <div className="rp-field">
-                      <span className="rp-ico">🩸</span>
-                      <select className="rp-inp" value={form.blood_type} onChange={f('blood_type')}>
-                        <option value="">Unknown</option>
-                        {['A+','A-','B+','B-','AB+','AB-','O+','O-'].map(bt => (
-                          <option key={bt} value={bt}>{bt}</option>
-                        ))}
-                      </select>
+
+                    {/* Blood type */}
+                    <div className="mt-3">
+                      <label
+                        htmlFor="blood_type"
+                        className="block text-xs font-medium mb-1.5"
+                        style={{ color: '#475569' }}
+                      >
+                        Blood type
+                      </label>
+                      <div className="relative">
+                        <DropletIcon
+                          className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
+                          style={{ color: '#94A3B8' } as any}
+                        />
+                        <select
+                          id="blood_type"
+                          value={form.blood_type}
+                          onChange={f('blood_type')}
+                          className="w-full pl-10 pr-3 py-2.5 rounded-xl text-sm transition-all appearance-none cursor-pointer"
+                          style={{ backgroundColor: '#FAFAF9', border: '1px solid #E7E5E4', color: '#0F172A', outline: 'none' }}
+                          onFocus={inputFocus}
+                          onBlur={inputBlur}
+                        >
+                          <option value="">Unknown</option>
+                          {['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'].map((bt) => (
+                            <option key={bt} value={bt}>
+                              {bt}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="rp-f6">
-                    <button type="submit" disabled={loading} className="rp-btn">
-                      {loading
-                        ? <><span style={{ width:16,height:16,border:'2px solid rgba(255,255,255,0.35)',borderTopColor:'#fff',borderRadius:'50%',animation:'spin 0.75s linear infinite' }} />Creating account…</>
-                        : 'Create Account →'
+                  {/* Submit — bright gradient */}
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full mt-3 inline-flex items-center justify-center gap-2 px-6 py-3.5 text-white font-semibold rounded-xl transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                    style={{
+                      fontFamily: "'Sora', sans-serif",
+                      background: 'linear-gradient(135deg, #14B8A6 0%, #0D9488 50%, #0F766E 100%)',
+                      boxShadow: '0 10px 30px rgba(13, 148, 136, 0.45), 0 4px 10px rgba(20, 184, 166, 0.25)',
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!e.currentTarget.disabled) {
+                        e.currentTarget.style.boxShadow =
+                          '0 16px 40px rgba(13, 148, 136, 0.55), 0 6px 14px rgba(20, 184, 166, 0.35)'
+                        e.currentTarget.style.transform = 'translateY(-1px)'
                       }
-                    </button>
-                  </div>
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.boxShadow =
+                        '0 10px 30px rgba(13, 148, 136, 0.45), 0 4px 10px rgba(20, 184, 166, 0.25)'
+                      e.currentTarget.style.transform = 'translateY(0)'
+                    }}
+                  >
+                    {loading ? (
+                      <>
+                        <Spinner className="w-4 h-4" />
+                        Creating account
+                      </>
+                    ) : (
+                      <>
+                        Create account
+                        <ArrowIcon className="w-4 h-4" />
+                      </>
+                    )}
+                  </button>
+
+                  <p className="text-xs text-center leading-relaxed pt-1" style={{ color: '#64748B' }}>
+                    By creating an account, you agree this is a preliminary
+                    assessment tool and not a substitute for medical advice.
+                  </p>
                 </form>
 
-                <div className="rp-trust rp-f7">
-                  {['SSL Encrypted','Zero Data Retention','Free Forever'].map(t => (
-                    <div key={t} className="rp-trust-item"><span className="rp-trust-dot" />{t}</div>
-                  ))}
+                {/* Trust row */}
+                <div
+                  className="mt-7 pt-6 flex items-center justify-center gap-5 flex-wrap text-xs"
+                  style={{ borderTop: '1px solid #F5F4F0', color: '#64748B' }}
+                >
+                  <div className="flex items-center gap-1.5">
+                    <ShieldCheckIcon className="w-3.5 h-3.5" style={{ color: '#059669' } as any} />
+                    <span>Encrypted connection</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <ShieldCheckIcon className="w-3.5 h-3.5" style={{ color: '#059669' } as any} />
+                    <span>Free to use</span>
+                  </div>
                 </div>
-              </>
+              </div>
             )}
           </div>
         </div>
       </div>
-    </>
+    </div>
   )
 }

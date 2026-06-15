@@ -9,36 +9,52 @@ export default {
         mono: ['JetBrains Mono', 'monospace'],
       },
       colors: {
+        // ============================================================
+        // LIGHT THEME: Deep Teal + Cream + Navy
+        // ============================================================
+        // The `ink` palette is INVERTED (low = darkest, high = lightest)
+        // and uses warm stone/cream neutrals. Existing classes like
+        //   bg-ink-950 (page bg), bg-ink-900 (card), text-ink-50 (headings),
+        //   border-ink-700, text-ink-400 (muted)
+        // auto-convert from dark theme to this palette.
         ink: {
-          950: '#060A0F',
-          900: '#0D1117',
-          800: '#161B22',
-          700: '#21262D',
-          600: '#30363D',
-          500: '#484F58',
-          400: '#6E7681',
-          300: '#8B949E',
-          200: '#B1BAC4',
-          100: '#C9D1D9',
-          50:  '#F0F6FC',
+          50:  '#0F172A', // navy — headings, darkest text
+          100: '#1E293B',
+          200: '#334155',
+          300: '#475569',
+          400: '#64748B', // muted body text
+          500: '#94A3B8',
+          600: '#CBD5E1',
+          700: '#E7E5E4', // warm subtle borders
+          800: '#F5F4F0', // warm hover bg / subtle surface
+          900: '#FFFFFF', // card surface
+          950: '#FAFAF9', // warm cream page background
         },
+
+        // `teal` remapped to proper deep medical teal so existing
+        //   bg-teal-500, text-teal-400, hover:bg-teal-400
+        // automatically become deep teal accents.
         teal: {
-          400: '#2DD4BF',
-          500: '#14B8A6',
-          600: '#0D9488',
+          400: '#14B8A6', // teal-500 equivalent — lighter accent
+          500: '#0D9488', // teal-600 equivalent — primary
+          600: '#0F766E', // teal-700 equivalent — hover
         },
+
+        // Status colors kept vivid enough to read on cream backgrounds.
+        // IMPORTANT: These remain semantic (not all teal) — critical
+        // medical information must be visually distinguishable.
         rose: {
-          400: '#FB7185',
-          500: '#F43F5E',
+          400: '#E11D48', // rose-600
+          500: '#BE123C', // rose-700
         },
         amber: {
-          400: '#FBBF24',
-          500: '#F59E0B',
+          400: '#D97706', // amber-600
+          500: '#B45309', // amber-700
         },
         emerald: {
-          400: '#34D399',
-          500: '#10B981',
-        }
+          400: '#059669', // emerald-600
+          500: '#047857', // emerald-700
+        },
       },
       animation: {
         'fade-up':      'fadeUp 0.4s ease forwards',
