@@ -287,18 +287,14 @@ function ChatHistorySidebar({
 
   // Expanded sidebar
   return (
-    <>
-      {mobileOpen && (
-        <div className="fixed inset-0 z-30 bg-black/50 md:hidden" onClick={onMobileClose} />
-      )}
-      <div
-        className={`fixed inset-y-0 left-0 z-40 flex flex-col flex-shrink-0 transform transition-transform duration-300 ease-in-out md:static md:translate-x-0 md:z-auto ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}`}
-        style={{
-          width: '260px',
-          backgroundColor: '#FFFFFF',
-          borderRight: '1px solid #E7E5E4',
-        }}
-      >
+    <div
+      className="flex-shrink-0 flex flex-col"
+      style={{
+        width: '260px',
+        backgroundColor: '#FFFFFF',
+        borderRight: '1px solid #E7E5E4',
+      }}
+    >
       {/* Header */}
       <div
         className="px-3 py-3 flex items-center justify-between gap-2 flex-shrink-0"
@@ -393,7 +389,6 @@ function ChatHistorySidebar({
         </button>
       </div>
     </div>
-    </>
   )
 }
 
